@@ -1,15 +1,19 @@
 package jsonsocket
 
-// Flag definitions
+// SocketFlagType represents different types of socket flags.
+type SocketFlagType uint8
+
 const (
-	confirmHandshake      uint8 = 0 // 0: Confirm handshake
-	startDataTransmission uint8 = 1 // 1: Start data transmission
-	endDataTransmission   uint8 = 2 // 2: End data transmission
-	closeConnection       uint8 = 3 // 3: Close connection with the server
+	// Define different socket flags types
+	UndefinedFlag SocketFlagType = iota // Undefined flag
+	StartDataFlag                       // Start Data transmission flag
+	DataFlag                            // ontinuous data transmission flag
+	EndDataFlag                         // End data transmission
+	CloseFlag                           // Close connection flag
 )
 
-// socketMessage represents the structure of the JSON message used for communication
-type socketMessage struct {
-	Flag    *uint8      `json:"Flag"`    // Flag indicates the type of message
-	Payload interface{} `json:"Payload"` // Payload contains the actual data
+// SocketMessage represents the structure of the JSON message used for communication
+type SocketMessage struct {
+	Flag    SocketFlagType `json:"Flag"`    // Flag indicates the type of message
+	Payload interface{}    `json:"Payload"` // Payload contains the actual data
 }
