@@ -14,6 +14,6 @@ const (
 
 // SocketMessage represents the structure of the JSON message used for communication
 type SocketMessage struct {
-	Flag    SocketFlagType `json:"Flag"`    // Flag indicates the type of message
-	Payload interface{}    `json:"Payload"` // Payload contains the actual data
+	Flag    SocketFlagType `json:"flag"`    // Flag indicates the type of message
+	Payload interface{}    `json:"payload"` // Payload contains the actual data
 }

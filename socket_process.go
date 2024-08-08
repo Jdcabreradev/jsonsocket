@@ -1,5 +1,7 @@
 package jsonsocket
 
+import "fmt"
+
 // SocketProcess provides common implementations for socket operations.
 type SocketProcess struct {
 	ID      string         // ID is a unique identifier for the process
@@ -20,8 +22,8 @@ func (sp *SocketProcess) Listen() ([]interface{}, error) {
 		if err != nil {
 			return nil, ErrEOF
 		}
-
-		if socketMessage.Flag == UndefinedFlag || socketMessage.Payload == nil {
+		if socketMessage.Flag == UndefinedFlag ||
+			socketMessage.Payload == nil && socketMessage.Flag == DataFlag {
 			return nil, ErrInvalidData
 		}
 
@@ -30,8 +32,9 @@ func (sp *SocketProcess) Listen() ([]interface{}, error) {
 				return nil, ErrProtocolError
 			}
 			initFlag = true
+			continue
 		}
-
+		fmt.Println(socketMessage)
 		switch socketMessage.Flag {
 		case StartDataFlag:
 			return nil, ErrProtocolError
@@ -58,7 +61,7 @@ func (sp *SocketProcess) Response(data []interface{}) error {
 		dataResponse = append(dataResponse, SocketMessage{Flag: DataFlag, Payload: v})
 	}
 	dataResponse = append(dataResponse, SocketMessage{Flag: EndDataFlag})
-
+	fmt.Println(dataResponse)
 	for _, v := range dataResponse {
 		err := sp.Session.writer.Encode(v)
 		if err != nil {
