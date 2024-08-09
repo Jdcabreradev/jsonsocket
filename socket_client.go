@@ -32,7 +32,7 @@ func (sc *SocketClient) Connect() error {
 
 	clientSession := &socketSession{Socket: conn}
 	clientSession.Init()
-	sc.client = SocketProcess{ID: "ClientManager", Session: clientSession}
+	sc.client = SocketProcess{Id: "ClientManager", Session: clientSession}
 
 	return nil
 }

@@ -54,7 +54,7 @@ func (ss *SocketServer) Bind() string {
 		clientAddr := conn.RemoteAddr().String()
 		clientSession := socketSession{Socket: conn}
 		clientSession.Init()
-		ClientSocketProcess := &SocketProcess{ID: clientAddr, Session: &clientSession}
+		ClientSocketProcess := &SocketProcess{Id: clientAddr, Session: &clientSession}
 
 		ss.SyncProcess.Lock()
 		ss.SubProcess[clientAddr] = ClientSocketProcess

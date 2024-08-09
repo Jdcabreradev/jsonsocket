@@ -1,44 +1,29 @@
 package errors
 
-// SocketErrorType defines various types of socket errors.
-type SocketErrorType int
+// SocketError is a custom enum-like type for socket errors.
+type SocketError int
 
 const (
-	ErrConnectionFailed SocketErrorType = iota
-	ErrInvalidData
-	ErrEOF
-	ErrProtocolError
-	ErrConnectionTimeout
-	ErrConnectionRefused
-	ErrNetworkUnreachable
-	ErrAddressInUse
-	ErrProtocolMismatch
-	ErrSocketClosed
-	ErrMessageTooLarge
-	ErrUnknown
+	ProtocolError SocketError = iota // Error for protocol violations
+	TimeoutError                     // Error for connection timeouts
+	DisconnError                     // Error for unexpected disconnections
 )
 
-// Error messages associated with each error type.
-var socketErrorMessages = map[SocketErrorType]string{
-	ErrConnectionFailed:   "Connection failed",
-	ErrInvalidData:        "Invalid data received",
-	ErrEOF:                "End of file",
-	ErrProtocolError:      "Protocol error",
-	ErrConnectionTimeout:  "Connection timed out",
-	ErrConnectionRefused:  "Connection refused",
-	ErrNetworkUnreachable: "Network unreachable",
-	ErrAddressInUse:       "Address in use",
-	ErrProtocolMismatch:   "Protocol mismatch",
-	ErrSocketClosed:       "Socket closed",
-	ErrMessageTooLarge:    "Message too large",
-	ErrUnknown:            "Unknown error",
+// string returns a string representation of the SocketError.
+func (e SocketError) string() string {
+	switch e {
+	case ProtocolError:
+		return "Protocol error occurred"
+	case TimeoutError:
+		return "Connection timed out"
+	case DisconnError:
+		return "Client disconnected unexpectedly"
+	default:
+		return "Unknown socket error"
+	}
 }
 
-// Error returns the error message for the given error type.
-func (e SocketErrorType) Error() string {
-	msg, exists := socketErrorMessages[e]
-	if !exists {
-		return "Unknown error"
-	}
-	return msg
+// Error implements the error interface for SocketError.
+func (e SocketError) Error() string {
+	return e.string()
 }
