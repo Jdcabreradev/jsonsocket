@@ -1,4 +1,4 @@
-package jsonsocket
+package interfaces
 
 type IServerSocket interface {
 	Bind() string

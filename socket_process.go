@@ -23,12 +23,12 @@ func (sp *SocketProcess) Listen() ([]interface{}, error) {
 			return nil, ErrEOF
 		}
 		if socketMessage.Flag == UndefinedFlag ||
-			socketMessage.Payload == nil && socketMessage.Flag == DataFlag {
+			socketMessage.Payload == nil && socketMessage.Flag == TX {
 			return nil, ErrInvalidData
 		}
 
 		if !initFlag {
-			if socketMessage.Flag != StartDataFlag {
+			if socketMessage.Flag != START_TX {
 				return nil, ErrProtocolError
 			}
 			initFlag = true
@@ -36,13 +36,13 @@ func (sp *SocketProcess) Listen() ([]interface{}, error) {
 		}
 		fmt.Println(socketMessage)
 		switch socketMessage.Flag {
-		case StartDataFlag:
+		case START_TX:
 			return nil, ErrProtocolError
-		case DataFlag:
+		case TX:
 			dataList = append(dataList, socketMessage.Payload)
-		case EndDataFlag:
+		case END_TX:
 			nextData = false
-		case CloseFlag:
+		case CLOSE_CONN:
 			defer sp.Close()
 			nextData = false
 		default:
@@ -56,11 +56,11 @@ func (sp *SocketProcess) Listen() ([]interface{}, error) {
 // Response sends data to the socket session.
 func (sp *SocketProcess) Response(data []interface{}) error {
 	var dataResponse []SocketMessage
-	dataResponse = append(dataResponse, SocketMessage{Flag: StartDataFlag})
+	dataResponse = append(dataResponse, SocketMessage{Flag: START_TX})
 	for _, v := range data {
-		dataResponse = append(dataResponse, SocketMessage{Flag: DataFlag, Payload: v})
+		dataResponse = append(dataResponse, SocketMessage{Flag: TX, Payload: v})
 	}
-	dataResponse = append(dataResponse, SocketMessage{Flag: EndDataFlag})
+	dataResponse = append(dataResponse, SocketMessage{Flag: END_TX})
 	fmt.Println(dataResponse)
 	for _, v := range dataResponse {
 		err := sp.Session.writer.Encode(v)

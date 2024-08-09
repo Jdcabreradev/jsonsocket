@@ -1,4 +1,4 @@
-package jsonsocket
+package interfaces
 
 // ISocketProcess defines an interface for socket operations.
 // It includes methods for handling socket communication:
