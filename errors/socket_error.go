@@ -1,4 +1,4 @@
-package jsonsocket
+package errors
 
 // SocketErrorType defines various types of socket errors.
 type SocketErrorType int

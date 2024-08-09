@@ -1,12 +1,16 @@
 package jsonsocket
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Jdcabreradev/logify/v3"
+)
 
 // SocketProcess provides common implementations for socket operations.
 type SocketProcess struct {
-	ID      string         // ID is a unique identifier for the process
-	Session *socketSession // The actual session associated with this process
-
+	ID      string         // ID is a unique identifier for the process.
+	Session *socketSession // The actual session associated with this process.
+	Logger  *logify.Logger // Logger to handle log messages.
 }
 
 // Listen reads and processes data from the socket session.
