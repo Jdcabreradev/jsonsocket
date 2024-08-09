@@ -30,7 +30,7 @@ func (sc *SocketClient) Connect() error {
 		return ErrConnectionFailed
 	}
 
-	clientSession := &socketSession{Socket: conn}
+	clientSession := &socketSession{socket: conn}
 	clientSession.Init()
 	sc.client = SocketProcess{Id: "ClientManager", Session: clientSession}
 

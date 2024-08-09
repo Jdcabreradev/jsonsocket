@@ -6,6 +6,8 @@ type SocketError int
 const (
 	ProtocolError SocketError = iota // Error for protocol violations
 	TimeoutError                     // Error for connection timeouts
+	ReadError                        // Error for reader exception
+	WriteError                       // Error for writer exception
 	DisconnError                     // Error for unexpected disconnections
 )
 
@@ -16,6 +18,10 @@ func (e SocketError) string() string {
 		return "Protocol error occurred"
 	case TimeoutError:
 		return "Connection timed out"
+	case ReadError:
+		return "Reader cannot bind socket data"
+	case WriteError:
+		return "Writer cannot send data to socket"
 	case DisconnError:
 		return "Client disconnected unexpectedly"
 	default:

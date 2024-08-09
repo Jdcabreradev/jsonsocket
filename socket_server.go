@@ -52,7 +52,7 @@ func (ss *SocketServer) Bind() string {
 		}
 
 		clientAddr := conn.RemoteAddr().String()
-		clientSession := socketSession{Socket: conn}
+		clientSession := socketSession{socket: conn}
 		clientSession.Init()
 		ClientSocketProcess := &SocketProcess{Id: clientAddr, Session: &clientSession}
 
