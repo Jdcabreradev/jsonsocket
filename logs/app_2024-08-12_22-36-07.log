@@ -1,0 +1,12 @@
+[INFO] [2024-08-12T22:36:07-05:00] [ServerApp:VERBOSE] Server started!
+[INFO] [2024-08-12T22:36:12-05:00] [ServerApp:VERBOSE] New client added with process id: 127.0.0.1:65134
+[DEBUG] [2024-08-12T22:36:12-05:00] [ServerApp:VERBOSE] New connection received: 127.0.0.1:65134
+[INFO] [2024-08-12T22:36:12-05:00] [ServerApp:VERBOSE] New group created: Test
+[INFO] [2024-08-12T22:36:12-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:65134 subscribed to group Test
+[DEBUG] [2024-08-12T22:36:14-05:00] [ServerApp:VERBOSE] Group Test is receiving a broadcast message
+[INFO] [2024-08-12T22:36:47-05:00] [ServerApp:VERBOSE] New client added with process id: 127.0.0.1:65203
+[DEBUG] [2024-08-12T22:36:47-05:00] [ServerApp:VERBOSE] New connection received: 127.0.0.1:65203
+[INFO] [2024-08-12T22:36:47-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:65203 subscribed to group Test
+[INFO] [2024-08-12T22:38:07-05:00] [ServerApp:VERBOSE] New client added with process id: 127.0.0.1:65356
+[DEBUG] [2024-08-12T22:38:07-05:00] [ServerApp:VERBOSE] New connection received: 127.0.0.1:65356
+[INFO] [2024-08-12T22:38:07-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:65356 subscribed to group Test

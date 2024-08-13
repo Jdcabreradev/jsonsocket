@@ -1,4 +1,4 @@
-package models
+package jsonsocket
 
 import "github.com/Jdcabreradev/jsonsocket/enums"
 
@@ -6,5 +6,5 @@ import "github.com/Jdcabreradev/jsonsocket/enums"
 type SocketMessage struct {
 	Flag    enums.SocketFlag `json:"flag"`    // Flag indicates the type of message.
 	Payload interface{}      `json:"payload"` // Payload contains the actual data.
-	Channel string           `json:"channel"` // Channel sends payload across clients subscribed to it.
+	Group   string           `json:"group"`   // Channel sends payload across clients subscribed to it.
 }

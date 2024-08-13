@@ -4,11 +4,9 @@ package errors
 type SocketError int
 
 const (
-	ProtocolError SocketError = iota // Error for protocol violations
-	TimeoutError                     // Error for connection timeouts
-	ReadError                        // Error for reader exception
-	WriteError                       // Error for writer exception
-	DisconnError                     // Error for unexpected disconnections
+	ProtocolError       SocketError = iota // Error for protocol violations
+	DisconnError                           // Error for unexpected disconnections
+	ClientNotFoundError                    // Error for missing socketProcess
 )
 
 // string returns a string representation of the SocketError.
@@ -16,14 +14,10 @@ func (e SocketError) string() string {
 	switch e {
 	case ProtocolError:
 		return "Protocol error occurred"
-	case TimeoutError:
-		return "Connection timed out"
-	case ReadError:
-		return "Reader cannot bind socket data"
-	case WriteError:
-		return "Writer cannot send data to socket"
 	case DisconnError:
 		return "Client disconnected unexpectedly"
+	case ClientNotFoundError:
+		return "Client not found in server"
 	default:
 		return "Unknown socket error"
 	}

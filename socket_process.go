@@ -1,59 +1,92 @@
 package jsonsocket
 
 import (
-	"fmt"
+	"io"
 
 	"github.com/Jdcabreradev/jsonsocket/enums"
-	"github.com/Jdcabreradev/jsonsocket/models"
+	"github.com/Jdcabreradev/jsonsocket/errors"
 	"github.com/Jdcabreradev/logify/v3"
-	logify_enums "github.com/Jdcabreradev/logify/v3/enums"
 )
 
-// SocketProcess provides common implementations for socket operations.
-type SocketProcess struct {
-	Id            string                     // ID is a unique identifier for the process.
-	Session       *socketSession             // The actual session associated with this process.
-	ParentChannel chan models.ServerCallback // Channel to communicate with its parent (server or client).
-	Logger        *logify.Logger             // Logger to handle log messages.
+// socketProcess provides common implementations for socket operations.
+type socketProcess struct {
+	Id               string                  // ID is a unique identifier for the process.
+	Session          *socketSession          // The actual session associated with this process.
+	SubscribedGroups map[string]*SocketGroup // Groups the client is subscribed to.
+	socketBroker     *socketBroker           // Channel to communicate with the server and other clients.
+	Logger           logify.Logger           // Logger is used to log events and errors related to the socket process.
+}
+
+// newSocketProcess creates a new instance of socketSession with the specified id, session and manager.
+func newSocketProcess(id string, session socketSession, socketBroker *socketBroker) *socketProcess {
+	return &socketProcess{
+		Id:               id,
+		Session:          &session,
+		SubscribedGroups: make(map[string]*SocketGroup),
+		socketBroker:     socketBroker,
+	}
 }
 
 // Listen reads and processes data from the socket session.
-func (sp *SocketProcess) Listen() []interface{} {
+func (sp *socketProcess) Listen() ([]interface{}, error) {
+	// Initialize variables to store incoming data and track the processing state.
 	var dataList []interface{}
 	var initFlag bool
 	nextData := true
 
 	for nextData {
-		var socketMessage models.SocketMessage
-
-		err := sp.Session.reader.Decode(&socketMessage)
+		// Create a SocketMessage to store the incoming message from the session.
+		var message SocketMessage
+		err := sp.Session.Read(&message)
 		if err != nil {
-			sp.Logger.Log(logify_enums.ERROR, sp.Id+": "+err.Error())
-			return nil
+			if err == io.EOF {
+				return nil, errors.DisconnError
+			}
+			return nil, err
 		}
 
+		// If this is the first message, check if the transmission has started.
 		if !initFlag {
-			if socketMessage.Flag != enums.START_TX {
-				sp.Logger.Log(logify_enums.ERROR, sp.Id+": Protocol Error")
-				return nil
+			if message.Flag != enums.START_TX {
+				return nil, errors.ProtocolError
 			}
 			initFlag = true
 			continue
 		}
 
-		switch socketMessage.Flag {
-		case enums.START_TX:
-			sp.Logger.Log(logify_enums.ERROR, sp.Id+": Protocol Error")
-			return nil
+		// Handle different flags within the received message.
+		switch message.Flag {
 		case enums.TX:
-			dataList = append(dataList, socketMessage.Payload)
+			// Add payload data to the list.
+			dataList = append(dataList, message.Payload)
 		case enums.END_TX:
+			// End of transmission, stop receiving further data.
 			nextData = false
 		case enums.CLOSE_CONN:
-			defer sp.Close()
-			nextData = false
+			// Close the connection and remove the client from the broker.
+			sp.socketBroker.RemoveClient(sp.Id)
+			return dataList, nil
+		case enums.SUB_CHANNEL:
+			// Subscribe the client to a specified group.
+			sp.socketBroker.SubscribeToGroup(message.Group, sp.Id)
+			dataList = []interface{}{}
+			initFlag = false
+			continue
+		case enums.BROADCAST_CHANNEL:
+			// Broadcast a message to all clients in the specified group.
+			sp.socketBroker.BroadcastToGroup(message.Group, []interface{}{message.Payload})
+			dataList = []interface{}{}
+			initFlag = false
+			continue
+		case enums.UNSUB_CHANNEL:
+			// Unsubscribe the client from a specified group.
+			sp.socketBroker.UnsubscribeFromGroup(message.Group, sp.Id)
+			dataList = []interface{}{}
+			initFlag = false
+			continue
 		default:
-			return nil, errors.ErrProtocolError
+			// If an unknown flag is encountered, return a protocol error.
+			return nil, errors.ProtocolError
 		}
 	}
 
@@ -61,25 +94,31 @@ func (sp *SocketProcess) Listen() []interface{} {
 }
 
 // Response sends data to the socket session.
-func (sp *SocketProcess) Response(data []interface{}) error {
-	var dataResponse []models.SocketMessage
-	dataResponse = append(dataResponse, models.SocketMessage{Flag: enums.START_TX})
+func (sp *socketProcess) Response(data []interface{}) error {
+	// Start building a response by initializing the message list with a START_TX flag.
+	var dataResponse []SocketMessage
+	dataResponse = append(dataResponse, SocketMessage{Flag: enums.START_TX})
+
+	// Iterate over the data to create messages for each item.
 	for _, v := range data {
-		dataResponse = append(dataResponse, models.SocketMessage{Flag: enums.TX, Payload: v})
+		dataResponse = append(dataResponse, SocketMessage{Flag: enums.TX, Payload: v})
 	}
-	dataResponse = append(dataResponse, models.SocketMessage{Flag: enums.END_TX})
-	fmt.Println(dataResponse)
+
+	// Add an END_TX message to indicate the end of the transmission.
+	dataResponse = append(dataResponse, SocketMessage{Flag: enums.END_TX})
+
+	// Send each message in the dataResponse list through the session.
 	for _, v := range dataResponse {
-		err := sp.Session.writer.Encode(v)
+		err := sp.Session.Write(v)
 		if err != nil {
-			return errors.ErrEOF
+			return err
 		}
 	}
 
 	return nil
 }
 
-// Close closes the socket session.
-func (sp *SocketProcess) Close() error {
+// Close terminates the socket session.
+func (sp *socketProcess) Close() error {
 	return sp.Session.Close()
 }

@@ -1,0 +1,17 @@
+[INFO] [2024-08-12T22:45:36-05:00] [ServerApp:VERBOSE] Server started!
+[INFO] [2024-08-12T22:45:43-05:00] [ServerApp:VERBOSE] New client added with process id: 127.0.0.1:50187
+[DEBUG] [2024-08-12T22:45:43-05:00] [ServerApp:VERBOSE] New connection received: 127.0.0.1:50187
+[INFO] [2024-08-12T22:45:43-05:00] [ServerApp:VERBOSE] New group created: Test
+[INFO] [2024-08-12T22:45:43-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:50187 subscribed to group Test
+[INFO] [2024-08-12T22:45:45-05:00] [ServerApp:VERBOSE] New client added with process id: 127.0.0.1:50192
+[DEBUG] [2024-08-12T22:45:45-05:00] [ServerApp:VERBOSE] New connection received: 127.0.0.1:50192
+[INFO] [2024-08-12T22:45:45-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:50192 subscribed to group Test
+[DEBUG] [2024-08-12T22:45:51-05:00] [ServerApp:VERBOSE] Group Test is receiving a broadcast message
+[DEBUG] [2024-08-12T22:45:54-05:00] [ServerApp:VERBOSE] Group Test is receiving a broadcast message
+[DEBUG] [2024-08-12T22:46:02-05:00] [ServerApp:VERBOSE] Group Test is receiving a broadcast message
+[INFO] [2024-08-12T22:46:02-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:50192 unsubscribed from group Test
+[INFO] [2024-08-12T22:46:02-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:50192 was disconnected and unsubscribed from all groups
+[DEBUG] [2024-08-12T22:46:04-05:00] [ServerApp:VERBOSE] Group Test is receiving a broadcast message
+[INFO] [2024-08-12T22:46:04-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:50187 unsubscribed from group Test
+[INFO] [2024-08-12T22:46:04-05:00] [ServerApp:VERBOSE] Group Test was deleted due to zero clients listening
+[INFO] [2024-08-12T22:46:04-05:00] [ServerApp:VERBOSE] Client 127.0.0.1:50187 was disconnected and unsubscribed from all groups
