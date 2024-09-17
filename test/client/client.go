@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"sync"
@@ -18,7 +19,10 @@ type MessageApp struct {
 
 func main() {
 	client := &jsonsocket.SocketClient{ServerAddr: ":8000", UseTLS: false}
-	client.Connect()
+	err := client.Connect()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	chatGroup := &MessageApp{GroupName: "Test", Members: make(map[string]bool)}
 	client.JoinGroup("Test")
 	var username string
